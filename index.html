@@ -72,51 +72,47 @@
   .compact{font-size:13px;padding:6px 8px;border-radius:8px}
   .panel-stack .flex-bottom{margin-top:auto;display:flex;flex-direction:column;gap:8px;}
   @media(max-width:980px){main{grid-template-columns:1fr;padding-bottom:24px}.panel-stack{order:2}.preview-wrap{order:1;margin-bottom:12px}.instagram-post{width:360px;height:450px}}
-  /* --- REAL MOBILE FIX --- */
-@media (max-width: 600px) {
+  /* Desktop preview */
+.instagram-post {
+  width: 560px;
+  height: 700px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #071326;
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 12px 40px rgba(2,6,12,0.7);
+}
 
+/* Mobile responsive preview */
+@media (max-width: 600px) {
   main {
     display: flex;
     flex-direction: column;
+    gap: 12px;
   }
 
-  .preview-wrap {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-  }
-
+  .preview-wrap,
   #previewWrap {
     width: 100%;
     display: flex;
     justify-content: center;
     padding: 0;
     margin: 0;
-    overflow: hidden;
   }
 
-  /* IMPORTANT: scale the actual preview box */
-  .instagram-post {
-    transform: scale(0.75);
-    transform-origin: top center;
-    margin: 0;
-  }
-
-  /* Avoid extra space around */
-  .app {
-    padding: 8px;
+  #preview {
+    width: 100%;
+    max-width: 360px; /* mobile-friendly width */
+    aspect-ratio: 560 / 700; /* maintain original ratio */
+    height: auto;
   }
 
   aside.panel-stack {
     width: 100%;
-    margin-top: 10px;
+    margin-top: 20px;
   }
 }
-
-
-
 
 </style>
 </head>
@@ -467,6 +463,7 @@ updateStyles(); renderEvents();
 </script>
 </body>
 </html>
+
 
 
 
