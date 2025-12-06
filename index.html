@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Football Match Editor — Aligned Layout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-900: #060709;
+    --panel: rgba(255,255,255,0.04);
+    --muted: rgba(255,255,255,0.6);
+    --glass: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    --accent: #9ccfff;
+    --accent-2: #7bd389;
+    --danger: #ff6b6b;
+    --soft: rgba(255,255,255,0.02);
+    --card-radius: 12px;
+    --gap: 12px;
+  }
+
+  *{box-sizing:border-box;font-family:'Inter',system-ui,Arial,Helvetica,sans-serif}
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#041021 0%, #071226 100%);color:#fff;}
+  .app{max-width:1200px;margin:18px auto;padding:18px;}
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;}
+  header h1{font-size:20px;font-weight:700;margin:0;letter-spacing:0.2px;}
+  .upload-row{display:flex;gap:8px;align-items:center}
+  main{display:grid;grid-template-columns:380px 1fr;gap:18px;align-items:start;}
+  .panel-stack{display:flex;flex-direction:column;gap:var(--gap);height:100%;}
+  .card{background:var(--panel);border-radius:var(--card-radius);padding:14px;box-shadow:0 6px 18px rgba(2,6,12,0.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.03);}
+  .card h3{margin:0 0 8px 0;font-size:14px;color:var(--muted);font-weight:600}
+  .row{display:flex;gap:10px;align-items:center}
+  .col{display:flex;flex-direction:column;gap:8px}
+  label.small{font-size:12px;color:var(--muted)}
+  input[type="text"], input[type="number"], select{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:8px;color:inherit;font-size:14px;width:100%;}
+  input[type="color"]{width:40px;height:32px;padding:0;border-radius:6px;border:1px solid rgba(255,255,255,0.06)}
+  .btn{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:10px;cursor:pointer;color:white;font-weight:600;}
+  .btn.small{padding:6px 8px;font-size:13px;border-radius:8px}
+  .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#021725;border:none}
+  .btn.ghost{opacity:.85;background:transparent}
+  .file-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.03);cursor:pointer;font-size:13px}
+  .team-row{display:flex;gap:10px;align-items:flex-end;}
+  .team-input{flex:1;display:flex;flex-direction:column;gap:6px}
+  .score-inputs{display:flex;flex-direction:column;align-items:center;min-width:120px}
+  .score-box{display:flex;align-items:center;gap:6px}
+  .score-box input{width:52px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);text-align:center;background:transparent}
+  .events-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+  .events-list{list-style:none;padding:6px;margin:6px 0;max-height:140px;overflow:auto;border-radius:8px;background:rgba(255,255,255,0.01)}
+  .events-list li{display:flex;justify-content:space-between;align-items:center;padding:6px;border-radius:6px;margin-bottom:4px;background:rgba(255,255,255,0.01)}
+  .controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .control-line{display:flex;gap:8px;align-items:center;justify-content:space-between}
+  .preview-wrap{display:flex;justify-content:center;align-items:flex-start}
+  #previewWrap{width:100%;display:flex;justify-content:center;align-items:flex-start;padding:18px;}
+  .instagram-post{width:560px;height:700px;position:relative;overflow:hidden;border-radius:14px;background:#071326;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 40px rgba(2,6,12,0.7);display:block;}
+  .instagram-post .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.55);transition:background-image .25s ease;}
+  .center-logos{position:absolute;top:56%;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:18px;width:86%;justify-content:center;z-index:2;}
+  .team{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:120px;}
+  .logo{width:96px;height:96px;border-radius:18px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:28px;background-size:cover;background-position:center;border:1px solid rgba(255,255,255,0.03)}
+  .teamname{font-weight:700;color:#fff;text-align:center}
+  .scoreboard{padding:14px 26px;border-radius:16px;background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center;position:relative;z-index:3;border:1px solid rgba(255,255,255,0.02)}
+  .score{font-weight:900;font-size:54px;color:#fff;letter-spacing:3px;display:flex;align-items:center;gap:10px}
+  .sep{margin:0 8px;color:rgba(255,255,255,0.6)}
+  .events-panel{position:absolute;bottom:78px;left:20px;right:20px;display:flex;justify-content:space-between;gap:12px;padding:10px;border-radius:12px;background:transparent;z-index:2;}
+  .events-col{width:48%;max-height:160px;overflow:auto;padding:8px;border-radius:10px;background:linear-gradient(180deg, rgba(0,0,0,0.26), rgba(0,0,0,0.22));border:1px solid rgba(255,255,255,0.02)}
+  .events-col .ev{display:flex;align-items:center;gap:8px;margin-bottom:6px;color:#fff;font-size:14px}
+  .events-col .ev .time{margin-left:auto;font-size:13px;opacity:.9}
+  .bottom-brand{position:absolute;bottom:12px;left:12px;font-size:13px;opacity:.95;color:#ffffff;cursor:grab;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02)}
+  hr{border:none;border-top:1px solid rgba(255,255,255,0.03);margin:12px 0}
+  .muted{color:var(--muted);font-size:13px}
+  .compact{font-size:13px;padding:6px 8px;border-radius:8px}
+  .panel-stack .flex-bottom{margin-top:auto;display:flex;flex-direction:column;gap:8px;}
+  @media(max-width:980px){main{grid-template-columns:1fr;padding-bottom:24px}.panel-stack{order:2}.preview-wrap{order:1;margin-bottom:12px}.instagram-post{width:360px;height:450px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div style="display:flex;gap:12px;align-items:center">
+      <h1>Match Editor</h1>
+      <div class="muted">Instagram-style editor • clean preview</div>
+    </div>
+    <div class="upload-row">
+      <label class="file-btn btn" title="Upload background">
+        Upload BG
+        <input type="file" id="bgUpload" hidden accept="image/*">
+      </label>
+      <button id="resetBg" class="btn ghost">Reset</button>
+    </div>
+  </header>
+  <main>
+    <aside class="panel-stack" aria-label="Controls">
+      <!-- Team & Score -->
+      <div class="card">
+        <h3>Match Info</h3>
+        <div class="team-row">
+          <div class="team-input">
+            <label class="small">Team A</label>
+            <input id="teamAName" placeholder="Team A" type="text" />
+            <label class="file-btn small btn">Logo<input type="file" id="teamALogo" hidden accept="image/*"></label>
+          </div>
+          <div class="score-inputs">
+            <label class="small">Score</label>
+            <div class="score-box"><input id="scoreA" type="number" min="0" value="0" /><span class="dash">-</span><input id="scoreB" type="number" min="0" value="0" /></div>
+          </div>
+          <div class="team-input">
+            <label class="small">Team B</label>
+            <input id="teamBName" placeholder="Team B" type="text" />
+            <label class="file-btn small btn">Logo<input type="file" id="teamBLogo" hidden accept="image/*"></label>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px">
+          <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="toggleTeamNames" /> Hide Team Names</label>
+          <button id="clearEvents" class="btn ghost">Clear Events</button>
+        </div>
+      </div>
+
+      <!-- Events -->
+      <div class="card">
+        <h3>Events</h3>
+        <div class="events-grid">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div class="muted">Team A</div>
+              <div style="display:flex;gap:6px">
+                <button class="btn small" data-team="A" data-type="goal">Goal</button>
+                <button class="btn small" data-team="A" data-type="yellow">Yellow</button>
+                <button class="btn small" data-team="A" data-type="red">Red</button>
+                
+                <button class="btn small" data-team="A" data-type="og">OG</button>
+                <button class="btn small" data-team="A" data-type="pen">Penalty</button>
+              </div>
+            </div>
+            <ul id="eventsA" class="events-list"></ul>
+          </div>
+          <br>
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div class="muted">Team B</div>
+              <div style="display:flex;gap:6px">
+                <button class="btn small" data-team="B" data-type="goal">Goal</button>
+                <button class="btn small" data-team="B" data-type="yellow">Yellow</button>
+                <button class="btn small" data-team="B" data-type="red">Red</button>
+            
+                <button class="btn small" data-team="B" data-type="og">OG</button>
+                <button class="btn small" data-team="B" data-type="pen">Penalty</button>
+              </div>
+            </div>
+            <ul id="eventsB" class="events-list"></ul>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+        
+        </div>
+      </div>
+
+      <!-- Resize & Colors -->
+      <div class="card">
+        <h3>Resize & Color Controls</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <label class="small">Team Name Font Size<input type="number" id="teamNameSize" value="16" /></label>
+          <label class="small">Score Font Size<input type="number" id="scoreSize" value="48" /></label>
+          <label class="small">Logo Size<input type="number" id="logoSize" value="100" /></label>
+          <label class="small">Event Player Font Size<input type="number" id="eventPlayerSize" value="14" /></label>
+          <label class="small">Event Minute Font Size<input type="number" id="eventMinuteSize" value="13" /></label>
+          <label class="small">Score Panel Opacity<input type="range" id="scorePanelOpacity" min="0" max="1" step="0.01" value="0.25" /></label>
+        </div>
+        <h3 style="margin-top:8px">Color Controls</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;margin-top:8px">
+          <label class="small">Team Name Color : <input type="color" id="teamNameColor" value="#ffffff"></label>
+          <label class="small">Score Color : <input type="color" id="scoreColor" value="#ffffff"></label>
+          <label class="small">Goal Color : <input type="color" id="goalColor" value="#ffffff"></label>
+          <label class="small">Yellow Card : <input type="color" id="yellowColor" value="#ffff00"></label>
+          <label class="small">Red Card : <input type="color" id="redColor" value="#ff0000"></label>
+          <label class="small">OG Color : <input type="color" id="ogColor" value="#ffffff"></label>
+          <label class="small">Penalty Color : <input type="color" id="penaltyColor" value="#ff3b3b"></label>
+        </div>
+        <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between">
+          <label><input type="checkbox" id="combineEvents" /> Combine Event Panels</label>
+          <div class="muted">Events Opacity<input type="range" id="eventsPanelOpacity" min="0" max="1" step="0.01" value="0.25"></div>
+        </div>
+      </div>
+
+      <!-- Move Panels -->
+      <div class="card">
+        <h3>Move Panels</h3>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <select id="panelSelect" class="compact">
+            <option value="matchPanel">Match Panel</option>
+            <option value="eventsPanel">Events Panel</option>
+          </select>
+          <div style="display:flex;gap:6px">
+            <button class="btn small" data-dir="up">↑</button>
+            <button class="btn small" data-dir="down">↓</button>
+            <button id="resetPanelBtn" class="btn small">Default</button>
+          </div>
+        </div>
+        <div class="muted">Drag brand on preview to reposition</div>
+      </div>
+
+      <!-- Download Section -->
+      <div class="flex-bottom">
+        <button id="downloadBtn" class="btn primary">Download (1080×1350)</button>
+      </div>
+    </aside>
+
+    <!-- Preview -->
+    <section class="preview-wrap">
+      <div id="previewWrap">
+        <div id="preview" class="instagram-post" aria-label="Preview">
+          <div class="bg" id="previewBg"></div>
+          <div class="center-logos" id="matchPanel" data-default-top="56%">
+            <div class="team"><div class="logo" id="logoA">⚽</div><div class="teamname" id="previewTeamA">Team A</div></div>
+            <div class="scoreboard"><div class="score"><span id="previewScoreA">0</span><span class="sep">-</span><span id="previewScoreB">0</span></div></div>
+            <div class="team"><div class="logo" id="logoB">⚽</div><div class="teamname" id="previewTeamB">Team B</div></div>
+          </div>
+          <div class="events-panel" id="eventsPanel" data-default-top="84px">
+            <div class="events-col" id="previewEventsA"></div>
+            <div class="events-col" id="previewEventsB"></div>
+          </div>
+          <div class="bottom-brand" id="brandName" draggable="true">VAR Vision</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// Utility
+const el=id=>document.getElementById(id);
+
+// Elements
+const teamAName=el('teamAName'), teamBName=el('teamBName');
+const previewTeamA=el('previewTeamA'), previewTeamB=el('previewTeamB');
+const scoreA=el('scoreA'), scoreB=el('scoreB');
+const previewScoreA=el('previewScoreA'), previewScoreB=el('previewScoreB');
+const logoA=el('logoA'), logoB=el('logoB');
+const teamALogoInp=el('teamALogo'), teamBLogoInp=el('teamBLogo');
+const previewBg=el('previewBg'), bgUpload=el('bgUpload');
+const eventsA=el('eventsA'), eventsB=el('eventsB');
+const previewEventsA=el('previewEventsA'), previewEventsB=el('previewEventsB');
+const downloadBtn=el('downloadBtn'), clearEvents=el('clearEvents');
+const resetBg=el('resetBg'), toggleTeamNames=el('toggleTeamNames');
+const matchPanel=el('matchPanel'), eventsPanel=el('eventsPanel'), brandName=el('brandName');
+
+// Color controls
+const teamNameColor=el('teamNameColor'), scoreColor=el('scoreColor');
+const goalColor=el('goalColor'), yellowColor=el('yellowColor');
+const redColor=el('redColor'), ogColor=el('ogColor'), penaltyColor=el('penaltyColor');
+
+// Resize controls
+const teamNameSize=el('teamNameSize'), scoreSize=el('scoreSize'), logoSize=el('logoSize');
+const eventPlayerSize=el('eventPlayerSize'), eventMinuteSize=el('eventMinuteSize');
+const scorePanelOpacity=el('scorePanelOpacity'), eventsPanelOpacity=el('eventsPanelOpacity');
+const combineEvents=el('combineEvents');
+
+// Events storage
+let events={A:[],B:[]};
+
+// Upload images
+function readImageFile(file,cb){const r=new FileReader(); r.onload=e=>cb(e.target.result); r.readAsDataURL(file);}
+teamALogoInp.onchange=e=>{const f=e.target.files[0]; if(!f) return; readImageFile(f,src=>{logoA.style.backgroundImage=`url(${src})`; logoA.textContent=''});}
+teamBLogoInp.onchange=e=>{const f=e.target.files[0]; if(!f) return; readImageFile(f,src=>{logoB.style.backgroundImage=`url(${src})`; logoB.textContent=''});}
+bgUpload.onchange=e=>{const f=e.target.files[0]; if(!f) return; readImageFile(f,src=>previewBg.style.backgroundImage=`url(${src})`);}
+resetBg.onclick=()=>previewBg.style.backgroundImage='';
+
+// Update team names & scores
+teamAName.oninput=updateTeamNames; teamBName.oninput=updateTeamNames;
+scoreA.oninput=()=>previewScoreA.textContent=scoreA.value;
+scoreB.oninput=()=>previewScoreB.textContent=scoreB.value;
+toggleTeamNames.onchange=updateTeamNames;
+function updateTeamNames(){
+  const hide=toggleTeamNames.checked;
+  previewTeamA.style.display=hide?'none':'block';
+  previewTeamB.style.display=hide?'none':'block';
+  previewTeamA.textContent=teamAName.value||'Team A';
+  previewTeamB.textContent=teamBName.value||'Team B';
+}
+
+// Event handling
+document.querySelectorAll('[data-team]').forEach(b=>{
+  b.onclick=()=>{
+    const team=b.dataset.team,type=b.dataset.type;
+    const pname=prompt('Player name?'); if(!pname) return;
+    const minute=prompt('Minute?'); if(minute===null) return;
+    events[team].push({type,player:pname,minute});
+    renderEvents();
+  }
+});
+
+// Event icons
+function icon(type){
+  if(type==='goal') return '⚽';
+  if(type==='yellow') return '🟨';
+  if(type==='red') return '🟥';
+  if(type==='og') return 'OG';
+  if(type==='pen') return '⚽[PEN]';
+}
+
+// Render events
+function renderEvents(){
+  eventsA.innerHTML=''; eventsB.innerHTML=''; previewEventsA.innerHTML=''; previewEventsB.innerHTML='';
+
+  previewEventsA.style.display='block'; previewEventsB.style.display='block';
+  previewEventsA.parentElement.style.display='flex'; previewEventsA.parentElement.style.justifyContent='space-between';
+  previewEventsA.style.width='48%'; previewEventsB.style.width='48%';
+
+  events.A.forEach((ev,i)=>{
+    const li=document.createElement('li'); li.innerHTML=`${icon(ev.type)} ${ev.player} <span class='time'>${ev.minute}'</span>`;
+    const rm=document.createElement('button'); rm.textContent='✖'; rm.className='btn small'; rm.onclick=()=>{events.A.splice(i,1);renderEvents()}; li.appendChild(rm); eventsA.appendChild(li);
+    const div=document.createElement('div'); div.className='ev'; div.innerHTML=`<span>${icon(ev.type)} ${ev.player}</span><span class='time'>${ev.minute}'</span>`; previewEventsA.appendChild(div);
+  });
+  events.B.forEach((ev,i)=>{
+    const li=document.createElement('li'); li.innerHTML=`${icon(ev.type)} ${ev.player} <span class='time'>${ev.minute}'</span>`;
+    const rm=document.createElement('button'); rm.textContent='✖'; rm.className='btn small'; rm.onclick=()=>{events.B.splice(i,1);renderEvents()}; li.appendChild(rm); eventsB.appendChild(li);
+    const div=document.createElement('div'); div.className='ev'; div.innerHTML=`<span>${icon(ev.type)} ${ev.player}</span><span class='time'>${ev.minute}'</span>`; previewEventsB.appendChild(div);
+  });
+  applyColors(); updateEventsOpacity();
+}
+
+// Events opacity
+function updateEventsOpacity(){
+  if(combineEvents.checked){
+    eventsPanel.style.background=`rgba(0,0,0,${eventsPanelOpacity.value})`;
+    previewEventsA.style.background='transparent'; previewEventsB.style.background='transparent';
+  } else {
+    eventsPanel.style.background='transparent';
+    previewEventsA.style.background=`rgba(0,0,0,${eventsPanelOpacity.value})`;
+    previewEventsB.style.background=`rgba(0,0,0,${eventsPanelOpacity.value})`;
+  }
+}
+clearEvents.onclick=()=>{if(confirm('Clear all events?')){events={A:[],B:[]};renderEvents()}}
+
+// Styles / Sizes
+function updateStyles(){
+  previewTeamA.style.fontSize=previewTeamB.style.fontSize=teamNameSize.value+'px';
+  previewScoreA.style.fontSize=previewScoreB.style.fontSize=scoreSize.value+'px';
+  logoA.style.width=logoB.style.width=logoSize.value+'px';
+  logoA.style.height=logoB.style.height=logoSize.value+'px';
+  document.querySelectorAll('.events-col .ev span:first-child').forEach(e=>e.style.fontSize=eventPlayerSize.value+'px');
+  document.querySelectorAll('.events-col .ev .time').forEach(t=>t.style.fontSize=eventMinuteSize.value+'px');
+  document.querySelector('.scoreboard').style.background=`rgba(0,0,0,${scorePanelOpacity.value})`;
+  updateEventsOpacity();
+}
+[teamNameSize,scoreSize,logoSize,eventPlayerSize,eventMinuteSize,scorePanelOpacity,eventsPanelOpacity].forEach(inp=>inp.oninput=()=>{updateStyles(); applyColors();});
+combineEvents.onchange=renderEvents;
+
+// Colors
+function applyColors(){
+  previewTeamA.style.color=previewTeamB.style.color=teamNameColor.value;
+  previewScoreA.style.color=previewScoreB.style.color=scoreColor.value;
+  document.querySelectorAll('.events-col .ev').forEach(ev=>{
+    const text=ev.textContent; let color='#fff';
+    if(text.includes('⚽[PEN]')) color=penaltyColor.value;
+    else if(text.includes('⚽')) color=goalColor.value;
+    else if(text.includes('🟨')) color=yellowColor.value;
+    else if(text.includes('🟥')) color=redColor.value;
+    else if(text.includes('OG')) color=ogColor.value;
+    ev.querySelector('span:first-child').style.color=color;
+  });
+}
+[teamNameColor,scoreColor,goalColor,yellowColor,redColor,ogColor,penaltyColor].forEach(inp=>inp.oninput=applyColors);
+
+// Panel movement
+const panelSelectEl=el('panelSelect');
+document.querySelectorAll('[data-dir]').forEach(btn=>{
+  btn.onclick=()=>{const panel=el(panelSelectEl.value); let top=parseFloat(panel.style.top)||panel.offsetTop; if(btn.dataset.dir==='up') top-=5; if(btn.dataset.dir==='down') top+=5; panel.style.top=top+'px';}
+});
+el('resetPanelBtn').onclick=()=>{[matchPanel,eventsPanel].forEach(p=>{if(p.dataset.defaultTop.includes('%')) p.style.top=p.dataset.defaultTop; else p.style.top=p.dataset.defaultTop+'px';});};
+
+// Brand drag — fixed with smooth mouse drag
+(function(){
+  const brand = brandName;
+  const container = el('preview');
+  let isDragging=false, offsetX=0, offsetY=0;
+
+  brand.addEventListener('mousedown', e => {
+    isDragging=true;
+    const rect=brand.getBoundingClientRect();
+    const parentRect=container.getBoundingClientRect();
+    offsetX=e.clientX-rect.left;
+    offsetY=e.clientY-rect.top;
+    brand.style.cursor='grabbing';
+  });
+
+  document.addEventListener('mousemove', e => {
+    if(!isDragging) return;
+    const parentRect=container.getBoundingClientRect();
+    let left=e.clientX - parentRect.left - offsetX;
+    let top=e.clientY - parentRect.top - offsetY;
+    left=Math.max(0,Math.min(left,parentRect.width-brand.offsetWidth));
+    top=Math.max(0,Math.min(top,parentRect.height-brand.offsetHeight));
+    brand.style.left=left+'px';
+    brand.style.top=top+'px';
+  });
+
+  document.addEventListener('mouseup', e => {
+    if(isDragging){
+      isDragging=false;
+      brand.style.cursor='grab';
+    }
+  });
+})();
+
+// Download
+downloadBtn.onclick=()=>{
+  const node=el('preview'); const origW=node.style.width,origH=node.style.height; node.style.width='540px'; node.style.height='675px';
+  html2canvas(node,{scale:2,useCORS:true}).then(canvas=>{
+    node.style.width=origW; node.style.height=origH;
+    const a=document.createElement('a'); a.download=`${teamAName.value||'TeamA'}_vs_${teamBName.value||'TeamB'}.png`;
+    a.href=canvas.toDataURL('image/png'); a.click();
+  });
+}
+
+// Init
+updateStyles(); renderEvents();
+
+</script>
+</body>
+</html>
