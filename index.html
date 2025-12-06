@@ -72,37 +72,34 @@
   .compact{font-size:13px;padding:6px 8px;border-radius:8px}
   .panel-stack .flex-bottom{margin-top:auto;display:flex;flex-direction:column;gap:8px;}
   @media(max-width:980px){main{grid-template-columns:1fr;padding-bottom:24px}.panel-stack{order:2}.preview-wrap{order:1;margin-bottom:12px}.instagram-post{width:360px;height:450px}}
-  @media (max-width: 600px) {
+ /* REMOVE/IGNORE any previous mobile @media rules for main, preview-wrap, #previewWrap, #preview */
+
+/* Optional: scale preview slightly if screen is too narrow */
+@media (max-width: 600px) {
+  .instagram-post {
+    width: 560px;   /* keep desktop width */
+    height: 700px;  /* keep desktop height */
+    transform: scale(0.85);  /* shrink slightly to fit mobile */
+    transform-origin: top center;
+  }
+
+  /* Allow horizontal scroll to see full desktop layout */
   main {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 380px 1fr; /* same as desktop */
+    gap: 18px;
+    overflow-x: auto;  /* horizontal scroll */
   }
 
-  .preview-wrap {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 0;
-    margin: 0;
-  }
-
-  #previewWrap {
-    width: 100%;
-    max-width: 360px; /* optional: limit for very small screens */
+  .preview-wrap, #previewWrap {
     display: flex;
     justify-content: center;
-  }
-
-  #preview {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 560 / 700; /* maintain original ratio */
-    border-radius: 12px; /* keep the rounded corners */
+    align-items: flex-start;
+    width: max-content; /* allow full width of preview */
   }
 
   aside.panel-stack {
-    width: 100%;
-    margin-top: 20px;
+    width: 380px; /* same as desktop */
   }
 }
 
@@ -456,6 +453,7 @@ updateStyles(); renderEvents();
 </script>
 </body>
 </html>
+
 
 
 
