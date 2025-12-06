@@ -76,36 +76,36 @@
   main {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-  }
-
-  aside.panel-stack {
-    width: 100%;
-    order: 2;
   }
 
   .preview-wrap {
     width: 100%;
     display: flex;
     justify-content: center;
-    order: 1;
     padding: 0;
     margin: 0;
   }
 
   #previewWrap {
     width: 100%;
+    max-width: 360px; /* optional: limit for very small screens */
     display: flex;
     justify-content: center;
   }
 
   #preview {
-    width: 100%;       /* Make it responsive */
-    max-width: 360px;  /* Keep it in Instagram post ratio */
-    height: auto;      /* Maintain aspect ratio */
-    transform: none;   /* Remove scaling hack */
+    width: 100%;
+    height: auto;
+    aspect-ratio: 560 / 700; /* maintain original ratio */
+    border-radius: 12px; /* keep the rounded corners */
+  }
+
+  aside.panel-stack {
+    width: 100%;
+    margin-top: 20px;
   }
 }
+
 
 </style>
 </head>
@@ -456,6 +456,7 @@ updateStyles(); renderEvents();
 </script>
 </body>
 </html>
+
 
 
 
