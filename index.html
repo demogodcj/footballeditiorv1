@@ -72,32 +72,31 @@
   .compact{font-size:13px;padding:6px 8px;border-radius:8px}
   .panel-stack .flex-bottom{margin-top:auto;display:flex;flex-direction:column;gap:8px;}
   @media(max-width:980px){main{grid-template-columns:1fr;padding-bottom:24px}.panel-stack{order:2}.preview-wrap{order:1;margin-bottom:12px}.instagram-post{width:360px;height:450px}}
-  /* Force entire layout to stack on mobile */
-@media(max-width: 768px) {
+  @media (max-width: 700px) {
 
-    .preview-wrap {
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100% !important;
-        align-items: center !important;
-    }
+  main {
+    flex-direction: column;
+  }
 
-    #previewWrap {
-        width: 100% !important;
-        margin-bottom: 20px !important;
-    }
+  aside.panel-stack {
+    width: 100%;
+    max-width: 100%;
+  }
 
-    #controls, .controls {
-        width: 100% !important;
-    }
+  .preview-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
 
-    /* Prevent zoomed preview */
-    canvas, img, #preview {
-        max-width: 100% !important;
-        height: auto !important;
-    }
+  #previewWrap {
+    width: 100%;
+    transform: scale(0.8); /* prevents zoomed-in issue */
+    transform-origin: top center;
+  }
 }
-
 
 </style>
 </head>
@@ -448,6 +447,7 @@ updateStyles(); renderEvents();
 </script>
 </body>
 </html>
+
 
 
 
