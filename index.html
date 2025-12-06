@@ -72,13 +72,32 @@
   .compact{font-size:13px;padding:6px 8px;border-radius:8px}
   .panel-stack .flex-bottom{margin-top:auto;display:flex;flex-direction:column;gap:8px;}
   @media(max-width:980px){main{grid-template-columns:1fr;padding-bottom:24px}.panel-stack{order:2}.preview-wrap{order:1;margin-bottom:12px}.instagram-post{width:360px;height:450px}}
-  @media(max-width: 600px) {
-    .preview-wrap,
+  /* Force entire layout to stack on mobile */
+@media(max-width: 768px) {
+
+    .preview-wrap {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        align-items: center !important;
+    }
+
     #previewWrap {
-        flex-direction: column;
-        align-items: center;
+        width: 100% !important;
+        margin-bottom: 20px !important;
+    }
+
+    #controls, .controls {
+        width: 100% !important;
+    }
+
+    /* Prevent zoomed preview */
+    canvas, img, #preview {
+        max-width: 100% !important;
+        height: auto !important;
     }
 }
+
 
 </style>
 </head>
@@ -429,6 +448,7 @@ updateStyles(); renderEvents();
 </script>
 </body>
 </html>
+
 
 
 
